@@ -44,7 +44,7 @@ module Html
         status = response['x-w3c-validator-status']
         if status != 'Valid'
           # Reference in the stylesheets
-          response.body.sub!(%r{@import "./base.css"}, %Q{@import "#{File.dirname(w3c_url)}/base.css"})
+          response.body.sub!(%r{<head>}, %Q{<head><base href="#{w3c_url}" />})
           response_file = find_unique_path(File.join(tmp_dir, "w3c_response.html"))
           open(response_file, "w") { |f| f.puts(response.body) }
           "W3C status #{status}. Response from W3C was written to the file #{response_file}"
