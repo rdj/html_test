@@ -48,3 +48,27 @@ class ActionController::Base
     Html::Test::UrlChecker.new(self).check_redirects_resolve
   end
 end
+
+module Html::Test::AutoValidate
+  def self.included(base)
+    base.class_eval do
+      define_method :validate_page do
+        url = @request.request_uri
+        if ( !Html::Test::ValidateFilter.already_validated?(url) &&
+             @response.success? &&
+             @response.content_type =~ %r{\b text/html\b }xi )
+          assert_validates( ApplicationController.validators, @response.body.strip, @request.request_uri )
+          Html::Test::ValidateFilter.mark_url_validated( url )
+        end
+      end
+
+      define_method :process_with_validation do |*args|
+        ret = process_without_validation( *args )
+        validate_page
+        return ret
+      end
+
+      alias_method_chain :process, :validation
+    end
+  end
+end
