@@ -41,7 +41,7 @@ module Html
       def with_line_counts(body)
         separator = ("-" * 40) + $/
         body_counts = separator.dup
-        body.each_with_index do |line, i|
+        body.lines.each_with_index do |line, i|
           body_counts << sprintf("%4u %s", i+1, line) # Right align line numbers
         end
         body_counts << separator
