@@ -9,7 +9,7 @@ end
 module ActionController
   module Integration #:nodoc:
     class Session
-      include Html::Test::Assertions      
+      include Html::Test::Assertions
     end
   end
 end
@@ -53,11 +53,11 @@ module Html::Test::AutoValidate
   def self.included(base)
     base.class_eval do
       define_method :validate_page do
-        url = @request.request_uri
+        url = @request.fullpath
         if ( !Html::Test::ValidateFilter.already_validated?(url) &&
              @response.success? &&
-             @response.content_type =~ %r{\b text/html\b }xi )
-          assert_validates( ApplicationController.validators, @response.body.strip, @request.request_uri )
+             @response.content_type.to_s =~ %r{\b text/html \b}xi )
+          assert_validates( ApplicationController.validators, @response.body.strip, @request.fullpath )
           Html::Test::ValidateFilter.mark_url_validated( url )
         end
       end

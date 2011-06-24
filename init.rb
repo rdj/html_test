@@ -1,1 +1,1 @@
-require 'html_test' if RAILS_ENV == 'test'
+require 'html_test' if Rails.env == 'test'

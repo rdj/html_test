@@ -48,14 +48,14 @@ module Html
       end
 
       def rails_public_path
-        File.join(RAILS_ROOT, "public")
+        File.join(Rails.root, "public")
       end
 
       # Make URLs absolute paths, i.e. relative to the site root
       def make_absolute(url)
         url = remove_host(url) if has_protocol?(url)
         return url if url =~ %r{^/}
-        current_url = request.request_uri || url_from_params
+        current_url = request.fullpath || url_from_params
         current_url = File.dirname(current_url) if current_url !~ %r{/$}
         url = File.join(current_url, url) 
       end
@@ -135,7 +135,7 @@ module Html
       end
       
       def raise_invalid_url(url, message)
-        raise(Html::Test::InvalidUrl.new("#{message} for url '#{url}' request_uri='#{request.request_uri}' body='#{response.body}'"))
+        raise(Html::Test::InvalidUrl.new("#{message} for url '#{url}' fullpath='#{request.fullpath}' body='#{response.body}'"))
       end
     end
   end

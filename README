@@ -34,7 +34,7 @@ the HTML and link tests against a production or staging server over HTTP.
     include Html::Test::UrlSelector
 
     def clicks_around
-      page_url = request.request_uri
+      page_url = request.fullpath
       anchor_urls.reject { |url| external_http?(url) || skip_url?(url) || url == page_url }.
         reject { |url| url =~ /(logout|signout)/ }.uniq.each do |url|
 

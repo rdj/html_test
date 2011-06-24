@@ -40,13 +40,13 @@ module Html
       # Credit for the original code goes to Scott Baron (htonl)
       def self.w3c_errors(body)
         response = Net::HTTP.post_form(URI.parse(w3c_url),
-                              {'ss'=>w3c_show_source, 'fragment'=>body})
+                              {'ss'=>w3c_show_source, 'fragment'=>body.encode( ::Encoding::UTF_8, :undef => :replace ).force_encoding( ::Encoding::BINARY )})
         status = response['x-w3c-validator-status']
         if status != 'Valid'
           # Reference in the stylesheets
           response.body.sub!(%r{<head>}, %Q{<head><base href="#{w3c_url}" />})
           response_file = find_unique_path(File.join(tmp_dir, "w3c_response.html"))
-          open(response_file, "w") { |f| f.puts(response.body) }
+          open(response_file, "w:BINARY") { |f| f.puts(response.body.force_encoding(::Encoding::BINARY)) }
           "W3C status #{status}. Response from W3C was written to the file #{response_file}"
         else
           nil
