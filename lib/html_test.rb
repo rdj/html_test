@@ -4,6 +4,7 @@ end
 
 class Test::Unit::TestCase
   include Html::Test::Assertions
+  class_attribute :skip_html_validation
 end
 
 module ActionController
@@ -54,7 +55,8 @@ module Html::Test::AutoValidate
     base.class_eval do
       define_method :validate_page do
         url = @request.fullpath
-        if ( !Html::Test::ValidateFilter.already_validated?(url) &&
+        if ( !skip_html_validation &&
+             !Html::Test::ValidateFilter.already_validated?(url) &&
              @response.success? &&
              @response.content_type.to_s =~ %r{\b text/html \b}xi )
           assert_validates( ApplicationController.validators, @response.body.strip, @request.fullpath )
